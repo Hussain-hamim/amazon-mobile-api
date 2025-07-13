@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "title": "Playstation 5",
+    "description": "The latest Sony Playstation 5 console with ultra-fast SSD and stunning graphics.",
+    "price": 499.99,
+    "image": "ps5.jpg",
+    "category": "Electronics",
+    "brand": "Sony",
+    "stock": 20,
+    "glb": "ps5.glb"
+  },
+  {
+    "id": 2,
+    "title": "Apple iPhone 15",
+    "description": "Apple iPhone 15 with A17 chip and advanced camera system.",
+    "price": 999.99,
+    "image": "iphone15.jpg",
+    "category": "Electronics",
+    "brand": "Apple",
+    "stock": 35,
+    "glb": "iphone15.glb"
+  },
+  {
+    "id": 3,
+    "title": "Nike Air Max 270",
+    "description": "Nike Air Max 270 running shoes for men and women.",
+    "price": 129.99,
+    "image": "nike.jpg",
+    "category": "Shoes",
+    "brand": "Nike",
+    "stock": 50
+  },
+  {
+    "id": 4,
+    "title": "Instant Pot Duo 7-in-1",
+    "description": "Multi-use programmable pressure cooker, slow cooker, rice cooker, steamer, sauté, yogurt maker, and warmer.",
+    "price": 89.99,
+    "image": "pot.jpg",
+    "category": "Home & Kitchen",
+    "brand": "Instant Pot",
+    "stock": 40
+  }
+]
