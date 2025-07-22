@@ -9,15 +9,15 @@ import { clerkMiddleware, createClerkClient } from '@clerk/express';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const clerkClient = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY,
-  publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
-});
+// const clerkClient = createClerkClient({
+//   secretKey: process.env.CLERK_SECRET_KEY,
+//   publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+// });
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(clerkMiddleware({ clerkClient, jwtKey: process.env.CLERK_JWT_KEY }));
+// app.use(clerkMiddleware({ clerkClient, jwtKey: process.env.CLERK_JWT_KEY }));
 
 // Health check
 app.get('/health', (_req, res) => {
