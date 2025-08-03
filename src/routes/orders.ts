@@ -11,7 +11,7 @@ dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-router.post('/payment-sheet', async (req, res) => {
+router.post('/payment-sheet', clerkMiddleware(), async (req, res) => {
   const { amount, currency, email } = req.body;
   // Use an existing Customer ID if this is a returning customer.
   const customer = await stripe.customers.create({
@@ -50,29 +50,37 @@ router.get('/', clerkMiddleware(), async (req: any, res) => {
   }
 
   // 1. Find the internal user ID based on the Clerk user ID
-  const [user] = await db.select().from(users).where(eq(users.clerkUserId, clerkUserId));
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.clerkUserId, clerkUserId));
   if (!user) {
     res.status(404).json({ error: 'User not found' });
     return;
   }
 
   // 2. Use the internal user ID to fetch orders
-  const userOrders = await db.select().from(orders).where(eq(orders.userId, user.id));
+  const userOrders = await db
+    .select()
+    .from(orders)
+    .where(eq(orders.userId, user.id));
   const orderIds = userOrders.map((o) => o.id);
   let items = orderIds.length
-    ? await db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds))
+    ? await db
+        .select()
+        .from(orderItems)
+        .where(inArray(orderItems.orderId, orderIds))
     : [];
 
   // Fetch all articleIds for these items
   const articleIds = items.map((i) => i.articleId);
   const articlesMap = articleIds.length
-    ? (await db.select().from(articles).where(inArray(articles.id, articleIds))).reduce(
-        (acc, article) => {
-          acc[article.id] = article;
-          return acc;
-        },
-        {} as Record<number, any>
-      )
+    ? (
+        await db.select().from(articles).where(inArray(articles.id, articleIds))
+      ).reduce((acc, article) => {
+        acc[article.id] = article;
+        return acc;
+      }, {} as Record<number, any>)
     : {};
 
   // Attach full article info to each item, mapping imageUrl and glbUrl to full URLs
@@ -84,10 +92,14 @@ router.get('/', clerkMiddleware(), async (req: any, res) => {
       article = {
         ...article,
         imageUrl: article.imageUrl
-          ? `${protocol}://${host}/articles/image/${encodeURIComponent(article.imageUrl)}`
+          ? `${protocol}://${host}/articles/image/${encodeURIComponent(
+              article.imageUrl
+            )}`
           : null,
         glbUrl: article.glbUrl
-          ? `${protocol}://${host}/articles/glb/${encodeURIComponent(article.glbUrl)}`
+          ? `${protocol}://${host}/articles/glb/${encodeURIComponent(
+              article.glbUrl
+            )}`
           : null,
       };
     }
@@ -110,7 +122,10 @@ router.get('/all', async (_req, res) => {
   const allOrders = await db.select().from(orders);
   const orderIds = allOrders.map((o) => o.id);
   const items = orderIds.length
-    ? await db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds))
+    ? await db
+        .select()
+        .from(orderItems)
+        .where(inArray(orderItems.orderId, orderIds))
     : [];
   res.json(
     allOrders.map((order) => ({
@@ -134,18 +149,20 @@ router.get('/:id', async (req, res) => {
     return;
   }
   // Fetch items for this order
-  const items = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+  const items = await db
+    .select()
+    .from(orderItems)
+    .where(eq(orderItems.orderId, orderId));
 
   // Fetch all articleIds for these items
   const articleIds = items.map((i) => i.articleId);
   const articlesMap = articleIds.length
-    ? (await db.select().from(articles).where(inArray(articles.id, articleIds))).reduce(
-        (acc, article) => {
-          acc[article.id] = article;
-          return acc;
-        },
-        {} as Record<number, any>
-      )
+    ? (
+        await db.select().from(articles).where(inArray(articles.id, articleIds))
+      ).reduce((acc, article) => {
+        acc[article.id] = article;
+        return acc;
+      }, {} as Record<number, any>)
     : {};
 
   // Attach full article info to each item, mapping imageUrl and glbUrl to full URLs
@@ -157,10 +174,14 @@ router.get('/:id', async (req, res) => {
       article = {
         ...article,
         imageUrl: article.imageUrl
-          ? `${protocol}://${host}/articles/image/${encodeURIComponent(article.imageUrl)}`
+          ? `${protocol}://${host}/articles/image/${encodeURIComponent(
+              article.imageUrl
+            )}`
           : null,
         glbUrl: article.glbUrl
-          ? `${protocol}://${host}/articles/glb/${encodeURIComponent(article.glbUrl)}`
+          ? `${protocol}://${host}/articles/glb/${encodeURIComponent(
+              article.glbUrl
+            )}`
           : null,
       };
     }
@@ -183,7 +204,10 @@ router.post('/', clerkMiddleware(), async (req: any, res) => {
   }
 
   // 1. Find the internal user ID based on the Clerk user ID
-  const [user] = await db.select().from(users).where(eq(users.clerkUserId, clerkUserId));
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.clerkUserId, clerkUserId));
   if (!user) {
     res.status(404).json({ error: 'User not found' });
     return;
@@ -228,8 +252,14 @@ router.patch('/:id', async (req, res) => {
     await db.insert(orderItems).values(orderItemsToInsert);
   }
   // Optionally update other order fields here
-  const updatedOrder = await db.select().from(orders).where(eq(orders.id, orderId));
-  const updatedItems = await db.select().from(orderItems).where(eq(orderItems.orderId, orderId));
+  const updatedOrder = await db
+    .select()
+    .from(orders)
+    .where(eq(orders.id, orderId));
+  const updatedItems = await db
+    .select()
+    .from(orderItems)
+    .where(eq(orderItems.orderId, orderId));
   res.json({ ...updatedOrder[0], items: updatedItems });
 });
 
